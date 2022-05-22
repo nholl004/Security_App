@@ -1,4 +1,5 @@
 #include <wx/wxprec.h>
+#include "wx/simplebook.h"
  
 #ifndef WX_PRECOMP
     #include <wx/wx.h>
@@ -13,10 +14,12 @@ public:
 class MyFrame : public wxFrame
 {
 public:
-    MyFrame(const wxString &title);
- 
+    MyFrame(wxWindow *p, wxWindowID id, const wxString &title);
+    wxSimplebook *tabs;
 private:
     void OnClick(wxCommandEvent& event);
+    void signInPage();
+    void signUpPage();
 
     wxDECLARE_EVENT_TABLE();
 };
