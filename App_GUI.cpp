@@ -15,6 +15,8 @@ wxIMPLEMENT_APP(MyApp);
 
 wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
 EVT_BUTTON(wxID_ANY, MyFrame::OnClick)
+EVT_TEXT(wxID_ANY, MyFrame::OnClick)
+
 wxEND_EVENT_TABLE()
 
 bool MyApp::OnInit()
@@ -28,7 +30,11 @@ bool MyApp::OnInit()
 MyFrame::MyFrame(wxWindow *p ,wxWindowID id,const wxString &title) : wxFrame(p, id, title, wxDefaultPosition, wxSize(450,350))
 {
     tabs = new wxSimplebook(this);
+    homePage();
+}
 
+void MyFrame::homePage() const
+{
     wxPanel *panel = new wxPanel(tabs);
     
     wxBoxSizer *col1 = new wxBoxSizer(wxVERTICAL);
@@ -49,21 +55,21 @@ MyFrame::MyFrame(wxWindow *p ,wxWindowID id,const wxString &title) : wxFrame(p, 
 
     panel->SetSizer(col1);
     
-    tabs->InsertPage( 0, panel, "Home", true );
-
+    tabs->ShowNewPage(panel);
 }
-void MyFrame::signInPage()
+
+void MyFrame::signInPage() const
 {
-    wxPanel *panel = new wxPanel(tabs);
+    wxPanel *signInPg = new wxPanel(tabs);
     
     //wxButton *btn = new wxButton(panel, ID_SignUp, "Go to home page", wxPoint(10,10));
     wxBoxSizer *col = new wxBoxSizer(wxVERTICAL);
 
     wxBoxSizer *row_t1 = new wxBoxSizer(wxHORIZONTAL);
-    wxStaticText *title1 =  new wxStaticText(panel, wxID_ANY, 
+    wxStaticText *title1 =  new wxStaticText(signInPg, wxID_ANY, 
         wxT("Sign in to"));
     wxBoxSizer *row_t2 = new wxBoxSizer(wxHORIZONTAL);
-    wxStaticText *title2 =  new wxStaticText(panel, wxID_ANY, 
+    wxStaticText *title2 =  new wxStaticText(signInPg, wxID_ANY, 
         wxT("your account"));
 
     row_t1->Add(title1, 1);
@@ -72,29 +78,34 @@ void MyFrame::signInPage()
     col->Add(row_t2, 0,wxALIGN_CENTER | wxBOTTOM, 10);
 
     wxBoxSizer *row1 = new wxBoxSizer(wxHORIZONTAL);
-    wxStaticText *emailRq =  new wxStaticText(panel, wxID_ANY, 
+    wxStaticText *emailRq =  new wxStaticText(signInPg, wxID_ANY, 
         wxT("Enter Email: "));
 
     row1->Add(emailRq, 0, wxLEFT | wxRIGHT, 24);
-    wxTextCtrl *emailData = new wxTextCtrl(panel, wxID_ANY);
+    wxTextCtrl *emailData = new wxTextCtrl(signInPg, wxID_ANY);
     row1->Add(emailData, 1);
     col->Add(row1, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 10);
 
     wxBoxSizer *row2 = new wxBoxSizer(wxHORIZONTAL);
-    wxStaticText *passwordRq = new wxStaticText(panel, wxID_ANY, 
+    wxStaticText *passwordRq = new wxStaticText(signInPg, wxID_ANY, 
         wxT("Enter Password:"));
 
     row2->Add(passwordRq, 0, wxRIGHT, 25);
-    wxTextCtrl *passwordData = new wxTextCtrl(panel, wxID_ANY);
+    wxTextCtrl *passwordData = new wxTextCtrl(signInPg, wxID_ANY);
     row2->Add(passwordData, 1);
     col->Add(row2, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 10);
 
-    panel->SetSizer(col);
+    wxBoxSizer *row3 = new wxBoxSizer(wxHORIZONTAL);
+    row3->Add(new wxButton(signInPg, wxID_OK, "OK" ), 0, wxALL , 10);
+    row3->Add(new wxButton(signInPg, ID_Home, "Cancel" ), 0, wxALL , 10);
+    col->Add(row3, 0, wxEXPAND | wxLEFT , 240);
 
-    tabs->InsertPage( 1, panel, "Sign In" );
+    signInPg->SetSizer(col);
+
+    tabs->ShowNewPage(signInPg);
 }
 
-void MyFrame::signUpPage()
+void MyFrame::signUpPage() const
 {
     wxPanel *signUpPg = new wxPanel(tabs);
     
@@ -126,7 +137,7 @@ void MyFrame::signUpPage()
     wxStaticText *passwordRq = new wxStaticText(signUpPg, wxID_ANY, 
         wxT("Enter Password:"));
 
-    row2->Add(passwordRq, 0, wxRIGHT, 25);
+    row2->Add(passwordRq, 0, wxRIGHT, 26);
     wxTextCtrl *passwordData = new wxTextCtrl(signUpPg, wxID_ANY);
     row2->Add(passwordData, 1);
     col->Add(row2, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 10);
@@ -135,14 +146,19 @@ void MyFrame::signUpPage()
     wxStaticText *passwordVRq = new wxStaticText(signUpPg, wxID_ANY, 
         wxT("Verify Password:"));
 
-    row3->Add(passwordVRq, 0, wxRIGHT, 25);
+    row3->Add(passwordVRq, 0, wxRIGHT, 24);
     wxTextCtrl *passwordDataV = new wxTextCtrl(signUpPg, wxID_ANY);
-    row2->Add(passwordDataV, 1);
-    col->Add(row2, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 10);
+    row3->Add(passwordDataV, 1);
+    col->Add(row3, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 10);
+
+    wxBoxSizer *row4 = new wxBoxSizer(wxHORIZONTAL);
+    row4->Add(new wxButton(signUpPg, wxID_OK, "OK" ), 0, wxALL, 10);
+    row4->Add(new wxButton(signUpPg, ID_Home, "Cancel" ), 0, wxALL, 10);
+    col->Add(row4, 0, wxEXPAND | wxLEFT , 240);
 
     signUpPg->SetSizer(col);
 
-    tabs->InsertPage( 2, signUpPg, "Sign Up");
+    tabs->ShowNewPage(signUpPg);
 }
 
 void MyFrame::OnClick(wxCommandEvent& event)
@@ -151,16 +167,17 @@ void MyFrame::OnClick(wxCommandEvent& event)
     {
         case ID_SignIn:
             signInPage();
-            tabs->ChangeSelection(1);
             break;
 
         case ID_SignUp:
             signUpPage();
-            tabs->ChangeSelection(2);
             break;
 
         case ID_Home:
-            tabs->ChangeSelection(0);
+            homePage();
+            break;
+
+        case wxID_OK:
             break;
 
         default:

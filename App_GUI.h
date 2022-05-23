@@ -18,8 +18,10 @@ public:
     wxSimplebook *tabs;
 private:
     void OnClick(wxCommandEvent& event);
-    void signInPage();
-    void signUpPage();
+    
+    void homePage() const;
+    void signInPage() const;
+    void signUpPage() const;
 
     wxDECLARE_EVENT_TABLE();
 };
