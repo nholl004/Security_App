@@ -8,7 +8,9 @@ enum IDs
     ID_Frame2,
     ID_SignUp,
     ID_SignIn,
-    ID_Home
+    ID_Home,
+    ID_OK_SignUp,
+    ID_OK_SignIn
 };
 
 wxIMPLEMENT_APP(MyApp);
@@ -33,7 +35,7 @@ MyFrame::MyFrame(wxWindow *p ,wxWindowID id,const wxString &title) : wxFrame(p, 
     homePage();
 }
 
-void MyFrame::homePage() const
+void MyFrame::homePage()
 {
     wxPanel *panel = new wxPanel(tabs);
     
@@ -58,7 +60,7 @@ void MyFrame::homePage() const
     tabs->ShowNewPage(panel);
 }
 
-void MyFrame::signInPage() const
+void MyFrame::signInPage()
 {
     wxPanel *signInPg = new wxPanel(tabs);
     
@@ -82,7 +84,7 @@ void MyFrame::signInPage() const
         wxT("Enter Email: "));
 
     row1->Add(emailRq, 0, wxLEFT | wxRIGHT, 24);
-    wxTextCtrl *emailData = new wxTextCtrl(signInPg, wxID_ANY);
+    emailData = new wxTextCtrl(signInPg, wxID_ANY);
     row1->Add(emailData, 1);
     col->Add(row1, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 10);
 
@@ -91,12 +93,12 @@ void MyFrame::signInPage() const
         wxT("Enter Password:"));
 
     row2->Add(passwordRq, 0, wxRIGHT, 25);
-    wxTextCtrl *passwordData = new wxTextCtrl(signInPg, wxID_ANY);
+    passwordData = new wxTextCtrl(signInPg, wxID_ANY);
     row2->Add(passwordData, 1);
     col->Add(row2, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 10);
 
     wxBoxSizer *row3 = new wxBoxSizer(wxHORIZONTAL);
-    row3->Add(new wxButton(signInPg, wxID_OK, "OK" ), 0, wxALL , 10);
+    row3->Add(new wxButton(signInPg, ID_OK_SignIn, "OK" ), 0, wxALL , 10);
     row3->Add(new wxButton(signInPg, ID_Home, "Cancel" ), 0, wxALL , 10);
     col->Add(row3, 0, wxEXPAND | wxLEFT , 240);
 
@@ -105,7 +107,7 @@ void MyFrame::signInPage() const
     tabs->ShowNewPage(signInPg);
 }
 
-void MyFrame::signUpPage() const
+void MyFrame::signUpPage()
 {
     wxPanel *signUpPg = new wxPanel(tabs);
     
@@ -129,7 +131,7 @@ void MyFrame::signUpPage() const
         wxT("Enter Email: "));
 
     row1->Add(emailRq, 0, wxLEFT | wxRIGHT, 24);
-    wxTextCtrl *emailData = new wxTextCtrl(signUpPg, wxID_ANY);
+    emailData = new wxTextCtrl(signUpPg, wxID_ANY);
     row1->Add(emailData, 1);
     col->Add(row1, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 10);
 
@@ -138,7 +140,7 @@ void MyFrame::signUpPage() const
         wxT("Enter Password:"));
 
     row2->Add(passwordRq, 0, wxRIGHT, 26);
-    wxTextCtrl *passwordData = new wxTextCtrl(signUpPg, wxID_ANY);
+    passwordData = new wxTextCtrl(signUpPg, wxID_ANY);
     row2->Add(passwordData, 1);
     col->Add(row2, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 10);
 
@@ -147,12 +149,12 @@ void MyFrame::signUpPage() const
         wxT("Verify Password:"));
 
     row3->Add(passwordVRq, 0, wxRIGHT, 24);
-    wxTextCtrl *passwordDataV = new wxTextCtrl(signUpPg, wxID_ANY);
+    passwordDataV = new wxTextCtrl(signUpPg, wxID_ANY);
     row3->Add(passwordDataV, 1);
     col->Add(row3, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 10);
 
     wxBoxSizer *row4 = new wxBoxSizer(wxHORIZONTAL);
-    row4->Add(new wxButton(signUpPg, wxID_OK, "OK" ), 0, wxALL, 10);
+    row4->Add(new wxButton(signUpPg, ID_OK_SignUp, "OK" ), 0, wxALL, 10);
     row4->Add(new wxButton(signUpPg, ID_Home, "Cancel" ), 0, wxALL, 10);
     col->Add(row4, 0, wxEXPAND | wxLEFT , 240);
 
@@ -177,7 +179,15 @@ void MyFrame::OnClick(wxCommandEvent& event)
             homePage();
             break;
 
-        case wxID_OK:
+        case ID_OK_SignUp:
+            std::cout << emailData->GetLineText(0);
+            std::cout << passwordData->GetLineText(0);
+            std::cout << passwordDataV->GetLineText(0);
+            homePage();
+            break;
+
+        case ID_OK_SignIn:
+            homePage();
             break;
 
         default:

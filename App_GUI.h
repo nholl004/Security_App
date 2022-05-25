@@ -16,12 +16,15 @@ class MyFrame : public wxFrame
 public:
     MyFrame(wxWindow *p, wxWindowID id, const wxString &title);
     wxSimplebook *tabs;
+    wxTextCtrl *emailData;
+    wxTextCtrl *passwordData;
+    wxTextCtrl *passwordDataV;
 private:
     void OnClick(wxCommandEvent& event);
     
-    void homePage() const;
-    void signInPage() const;
-    void signUpPage() const;
+    void homePage();
+    void signInPage();
+    void signUpPage();
 
     wxDECLARE_EVENT_TABLE();
 };
