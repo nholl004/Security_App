@@ -1,3 +1,4 @@
+#include <fstream>
 #include "App_GUI.h"
 
 
@@ -18,7 +19,7 @@ wxIMPLEMENT_APP(MyApp);
 wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
 EVT_BUTTON(wxID_ANY, MyFrame::OnClick)
 EVT_TEXT(wxID_ANY, MyFrame::OnClick)
-
+EVT_UPDATE_UI(ID_OK_SignUp, MyFrame::sUpUpdateUI)
 wxEND_EVENT_TABLE()
 
 bool MyApp::OnInit()
@@ -100,7 +101,7 @@ void MyFrame::signInPage()
     wxBoxSizer *row3 = new wxBoxSizer(wxHORIZONTAL);
     row3->Add(new wxButton(signInPg, ID_OK_SignIn, "OK" ), 0, wxALL , 10);
     row3->Add(new wxButton(signInPg, ID_Home, "Cancel" ), 0, wxALL , 10);
-    col->Add(row3, 0, wxEXPAND | wxLEFT , 240);
+    col->Add(row3, 0, wxALIGN_RIGHT);
 
     signInPg->SetSizer(col);
 
@@ -156,41 +157,87 @@ void MyFrame::signUpPage()
     wxBoxSizer *row4 = new wxBoxSizer(wxHORIZONTAL);
     row4->Add(new wxButton(signUpPg, ID_OK_SignUp, "OK" ), 0, wxALL, 10);
     row4->Add(new wxButton(signUpPg, ID_Home, "Cancel" ), 0, wxALL, 10);
-    col->Add(row4, 0, wxEXPAND | wxLEFT , 240);
+    col->Add(row4, 0, wxALIGN_RIGHT);
 
     signUpPg->SetSizer(col);
 
     tabs->ShowNewPage(signUpPg);
 }
 
+bool emailValid(wxString email)
+{
+    std::string e = email.GetData()
+    bool valid = false;
+    //email size minus .com .org .gov .whatever with 4 chars min
+    int emailSize = email.size()-4;
+    while(!valid){
+        if(emailSize > 0 ){
+            if(e[emailSize-1] == "@")
+                valid = true;
+            else
+                emailSize-=1;
+        }
+        else 
+            return false;
+    }
+    return true;
+}
+
 void MyFrame::OnClick(wxCommandEvent& event)
 {
+    std::ofstream f;
     switch( event.GetId() )
     {
         case ID_SignIn:
+        //btn that sends user to sign in page
             signInPage();
             break;
 
         case ID_SignUp:
+        //btn that sends user to sign up page
             signUpPage();
             break;
 
         case ID_Home:
+        //btn that return to home page
             homePage();
             break;
 
         case ID_OK_SignUp:
-            std::cout << emailData->GetLineText(0);
-            std::cout << passwordData->GetLineText(0);
-            std::cout << passwordDataV->GetLineText(0);
+        //OK btn takes data from text ctrl if data is valid and not empty,
+        //then stores it to db or txt file upon sign up.
+
+            emailValid(emailData->GetValue());
+
+            f.open ("data.txt",std::ios_base::app);
+            if(f.is_open()){
+                f << emailData->GetValue()+ "%"+
+                    passwordData->GetValue()+"%"+
+                    passwordDataV->GetValue() << std::endl;
+            }
+            f.close();
+
             homePage();
             break;
 
         case ID_OK_SignIn:
+        //btn that validates a user in db or txt file
+        //then will log user into secure page
             homePage();
             break;
 
         default:
             event.Skip();
     }
+}
+
+void MyFrame::sUpUpdateUI(wxUpdateUIEvent& event)
+{
+    event.Enable(false);
+
+        if(!emailData->GetValue().empty() && 
+            !passwordData->GetValue().empty() && 
+            !passwordDataV->GetValue().empty()){
+                event.Enable(true);
+        }
 }

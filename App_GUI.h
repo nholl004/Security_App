@@ -21,6 +21,7 @@ public:
     wxTextCtrl *passwordDataV;
 private:
     void OnClick(wxCommandEvent& event);
+    void sUpUpdateUI(wxUpdateUIEvent& event);
     
     void homePage();
     void signInPage();
