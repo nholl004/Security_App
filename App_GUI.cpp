@@ -166,21 +166,24 @@ void MyFrame::signUpPage()
 
 bool emailValid(wxString email)
 {
-    std::string e = email.GetData()
-    bool valid = false;
-    //email size minus .com .org .gov .whatever with 4 chars min
-    int emailSize = email.size()-4;
-    while(!valid){
-        if(emailSize > 0 ){
-            if(e[emailSize-1] == "@")
-                valid = true;
-            else
-                emailSize-=1;
-        }
-        else 
-            return false;
-    }
-    return true;
+    //Checks for valid email @
+    std::string yahoo = "@yahoo.com";
+    std::string eMail = "@email.com";
+    std::string iCloud = "@icloud.com";
+    std::string gmail = "@gmail.com"; 
+    std::string e = email.ToStdString();
+
+    if(e.find(yahoo)!=std::string::npos) return true;
+    else if(e.find(eMail)!=std::string::npos) return true;
+    else if(e.find(iCloud)!=std::string::npos) return true;
+    else if(e.find(gmail)!=std::string::npos) return true;
+    else return false;
+}
+//Checks size of password is 8 or greater
+bool passwordValid(wxString pass){
+    std::string p = pass.ToStdString();
+    if(p.size() > 7)return true;
+    else false; 
 }
 
 void MyFrame::OnClick(wxCommandEvent& event)
@@ -206,9 +209,7 @@ void MyFrame::OnClick(wxCommandEvent& event)
         case ID_OK_SignUp:
         //OK btn takes data from text ctrl if data is valid and not empty,
         //then stores it to db or txt file upon sign up.
-
-            emailValid(emailData->GetValue());
-
+            
             f.open ("data.txt",std::ios_base::app);
             if(f.is_open()){
                 f << emailData->GetValue()+ "%"+
@@ -237,7 +238,11 @@ void MyFrame::sUpUpdateUI(wxUpdateUIEvent& event)
 
         if(!emailData->GetValue().empty() && 
             !passwordData->GetValue().empty() && 
-            !passwordDataV->GetValue().empty()){
+            !passwordDataV->GetValue().empty() &&
+            emailValid(emailData->GetValue()) &&
+            passwordValid(passwordData->GetValue()) &&
+            passwordValid(passwordDataV->GetValue()) &&
+            (passwordData->GetValue() == passwordDataV->GetValue())){
                 event.Enable(true);
         }
 }
