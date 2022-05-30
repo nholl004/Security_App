@@ -20,6 +20,7 @@ wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
 EVT_BUTTON(wxID_ANY, MyFrame::OnClick)
 EVT_TEXT(wxID_ANY, MyFrame::OnClick)
 EVT_UPDATE_UI(ID_OK_SignUp, MyFrame::sUpUpdateUI)
+EVT_UPDATE_UI(ID_OK_SignIn, MyFrame::sInUpdateUI)
 wxEND_EVENT_TABLE()
 
 bool MyApp::OnInit()
@@ -163,10 +164,14 @@ void MyFrame::signUpPage()
 
     tabs->ShowNewPage(signUpPg);
 }
-
+//What Does it do:
+//Checks for valid email @
+//ToDos:
+//Need to check if email was used
 bool emailValid(wxString email)
 {
-    //Checks for valid email @
+    email.LowerCase();
+    
     std::string yahoo = "@yahoo.com";
     std::string eMail = "@email.com";
     std::string iCloud = "@icloud.com";
@@ -179,16 +184,19 @@ bool emailValid(wxString email)
     else if(e.find(gmail)!=std::string::npos) return true;
     else return false;
 }
+//What Does it do:
 //Checks size of password is 8 or greater
+//ToDos:
+//use ascii to check characters (',.><123abc ... etc)
 bool passwordValid(wxString pass){
     std::string p = pass.ToStdString();
     if(p.size() > 7)return true;
-    else false; 
+    else return false; 
 }
 
 void MyFrame::OnClick(wxCommandEvent& event)
 {
-    std::ofstream f;
+    std::ofstream out;
     switch( event.GetId() )
     {
         case ID_SignIn:
@@ -210,21 +218,23 @@ void MyFrame::OnClick(wxCommandEvent& event)
         //OK btn takes data from text ctrl if data is valid and not empty,
         //then stores it to db or txt file upon sign up.
             
-            f.open ("data.txt",std::ios_base::app);
-            if(f.is_open()){
-                f << emailData->GetValue()+ "%"+
-                    passwordData->GetValue()+"%"+
-                    passwordDataV->GetValue() << std::endl;
+            out.open ("data.txt",std::ios_base::app);
+            if(out.is_open()){
+                out << emailData->GetValue()+ "%"+
+                    passwordData->GetValue()<< std::endl;
             }
-            f.close();
+            out.close();
 
             homePage();
             break;
 
         case ID_OK_SignIn:
-        //btn that validates a user in db or txt file
-        //then will log user into secure page
-            homePage();
+            //btn that validates a user in db or txt file
+            //then will log user into secure page
+            if(validCreds())
+                homePage();
+            else 
+                wxMessageBox("Incorrect email or password. Would you like to try again or make new account?");
             break;
 
         default:
@@ -232,17 +242,48 @@ void MyFrame::OnClick(wxCommandEvent& event)
     }
 }
 
+bool MyFrame::validCreds()
+{
+    std::ifstream in;
+    std::string line;
+    in.open("data.txt");
+    if(in.is_open()){
+        while(std::getline(in,line)){
+
+            std::string e = line.substr(0,line.find("%"));
+            line.erase(0, line.find("%")+1);
+            std::string p = line;
+
+            if(emailData->GetValue().ToStdString() == e &&
+                passwordData->GetValue().ToStdString() == p)
+                return true;
+
+        }
+        in.close();
+    }
+    return false;
+}
+
 void MyFrame::sUpUpdateUI(wxUpdateUIEvent& event)
 {
     event.Enable(false);
 
-        if(!emailData->GetValue().empty() && 
-            !passwordData->GetValue().empty() && 
-            !passwordDataV->GetValue().empty() &&
-            emailValid(emailData->GetValue()) &&
-            passwordValid(passwordData->GetValue()) &&
-            passwordValid(passwordDataV->GetValue()) &&
-            (passwordData->GetValue() == passwordDataV->GetValue())){
-                event.Enable(true);
-        }
+    if(!emailData->GetValue().empty() && 
+        !passwordData->GetValue().empty() && 
+        !passwordDataV->GetValue().empty() &&
+        emailValid(emailData->GetValue()) &&
+        passwordValid(passwordData->GetValue()) &&
+        (passwordData->GetValue() == passwordDataV->GetValue())){
+            event.Enable(true);
+    }
+}
+void MyFrame::sInUpdateUI(wxUpdateUIEvent& event)
+{
+    event.Enable(false);
+
+    if(!emailData->GetValue().empty() && 
+        !passwordData->GetValue().empty() && 
+        emailValid(emailData->GetValue())){
+            event.Enable(true);
+    }
 }

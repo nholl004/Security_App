@@ -22,6 +22,9 @@ public:
 private:
     void OnClick(wxCommandEvent& event);
     void sUpUpdateUI(wxUpdateUIEvent& event);
+    void sInUpdateUI(wxUpdateUIEvent& event);
+
+    bool validCreds();
     
     void homePage();
     void signInPage();
