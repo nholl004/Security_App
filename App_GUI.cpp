@@ -1,5 +1,6 @@
 #include <fstream>
 #include "App_GUI.h"
+#include "userProfile.cpp"
 
 
 enum IDs
@@ -164,6 +165,52 @@ void MyFrame::signUpPage()
 
     tabs->ShowNewPage(signUpPg);
 }
+
+void MyFrame::userProfilePage(wxString email)
+{
+    //establish profile class;
+    userProfile *user = new userProfile(email);
+    std::cout << user->getEmail()+"/"+user->getFullName()+"/"+user->getBirthday()<<std::endl;
+
+    wxPanel *userPg = new wxPanel(tabs);
+    
+    //wxButton *btn = new wxButton(panel, ID_SignUp, "Go to home page", wxPoint(10,10));
+    wxBoxSizer *col = new wxBoxSizer(wxVERTICAL);
+
+    wxBoxSizer *row_t1 = new wxBoxSizer(wxHORIZONTAL);
+    wxStaticText *title =  new wxStaticText(userPg, wxID_ANY, 
+        wxT("Profile Page"));
+
+    row_t1->Add(title, 1);
+    col->Add(row_t1, 0,wxALIGN_CENTER | wxALL, 10);
+
+    wxBoxSizer *rowFullName = new wxBoxSizer(wxHORIZONTAL);
+    wxStaticText *userNameTitle = new wxStaticText(userPg, wxID_ANY, 
+        wxT("Full Name: "));
+
+    rowFullName->Add(userNameTitle, 1);
+    col->Add(rowFullName,0,wxALIGN_LEFT | wxALL,10);
+
+    wxBoxSizer *rowEmail = new wxBoxSizer(wxHORIZONTAL);
+    wxStaticText *userEmailTitle = new wxStaticText(userPg, wxID_ANY, 
+        wxT("Email: "));
+
+    rowEmail->Add(userEmailTitle, 1);
+    col->Add(rowEmail,0,wxALIGN_LEFT | wxALL,10);
+
+    wxBoxSizer *rowBirth = new wxBoxSizer(wxHORIZONTAL);
+    wxStaticText *userBirthTitle = new wxStaticText(userPg, wxID_ANY, 
+        wxT("Birthday: "));
+
+    rowBirth->Add(userBirthTitle, 0, wxALIGN_LEFT);
+    col->Add(rowBirth,0,wxALIGN_LEFT | wxALL,10);
+
+    userPg->SetSizer(col);
+
+    tabs->ShowNewPage(userPg);
+    user->~userProfile();
+}
+
 //What Does it do:
 //Checks for valid email @
 //ToDos:
@@ -232,7 +279,7 @@ void MyFrame::OnClick(wxCommandEvent& event)
             //btn that validates a user in db or txt file
             //then will log user into secure page
             if(validCreds())
-                homePage();
+                userProfilePage(emailData->GetValue());
             else 
                 wxMessageBox("Incorrect email or password. Would you like to try again or make new account?");
             break;

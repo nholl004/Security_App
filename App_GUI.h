@@ -29,6 +29,7 @@ private:
     void homePage();
     void signInPage();
     void signUpPage();
+    void userProfilePage(wxString email);
 
     wxDECLARE_EVENT_TABLE();
 };
